@@ -34,7 +34,6 @@ def main():
         print(e)
         return
     
-    print("\nInitializing LLM...")
 
     try:
         llm = get_llm()
@@ -46,18 +45,19 @@ def main():
     queries = [
         "What are the core working hours for remote employees?",
         "What equipment does the company provide for remote work?",
-        "How do I request time off?"
-        "what are the Managers Responsibilities?"
-        "Give contact information of hr"
+        "How do I request time off?",
+        "Give contact information of hr",
+        "what are the Security and Confidentiality when i will be working remotely?"
         
     ]
     
     for query in queries:
-        
+        print(f"\n{'='*60}")
+        print(f"QUERY: {query}")
+        print(f"{'='*60}\n")
         
         try:
             retrieved_docs = retriever.invoke(query)
-            print(f"✓ Retrieved {len(retrieved_docs)} relevant chunks\n")
             
            
             

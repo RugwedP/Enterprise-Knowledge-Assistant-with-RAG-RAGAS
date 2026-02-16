@@ -1,6 +1,7 @@
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
 import os
+from langchain_community.vectorstores import Chroma
+
 
 def create_vector_store(chunks, cache_path="vector_store_cache"):
     """Create or load cached vector store"""
@@ -11,7 +12,8 @@ def create_vector_store(chunks, cache_path="vector_store_cache"):
         embeddings = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-mpnet-base-v2"
         )
-        vector_store = FAISS.load_local(
+
+        vector_store = Chroma(
             cache_path,
             embeddings,
             allow_dangerous_deserialization=True
@@ -27,10 +29,10 @@ def create_vector_store(chunks, cache_path="vector_store_cache"):
 
 
    
-    vector_store = FAISS.from_documents(chunks, embeddings)
+    vector_store = Chroma.from_documents(chunks, embeddings)
     
    
-    vector_store.save_local(cache_path)
+    vector_store.persist()
     
     print("Vector store created successfully!\n")
     return vector_store

@@ -1,25 +1,37 @@
-from langchain_community.embeddings import OllamaEmbeddings
-from langchain_chroma import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from tqdm import tqdm
+import os
 
-def create_vector_store(chunks):
-    """Create FAISS vector store from document chunks"""
-    embeddings = OllamaEmbeddings(model="llama3.2",show_progress=True)
+def create_vector_store(chunks, cache_path="vector_store_cache"):
+    """Create or load cached vector store"""
     
-    # Test with a single chunk first
-    print("Testing embedding generation...")
-    try:
-        test_embedding = embeddings.embed_query("test")
-        print(f"✓ Embedding generated successfully (dimension: {len(test_embedding)})")
-    except Exception as e:
-        print(f"Error generating embeddings: {e}")
-        print("Make sure Ollama is running: ollama serve")
-        raise
+    # Check if cache exists
+    if os.path.exists(cache_path):
+        print(f"📂 Loading cached vector store from {cache_path}...")
+        embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-mpnet-base-v2"
+        )
+        vector_store = FAISS.load_local(
+            cache_path,
+            embeddings,
+            allow_dangerous_deserialization=True
+        )
+        print("✓ Vector store loaded from cache! (instant)\n")
+        return vector_store
     
-    # Create FAISS vector store
+    # Create new vector store
+    print("\nCreating vector store...")
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-mpnet-base-v2"  # Better embeddings
+    )
+
+
     print("Creating vector store...")
-    vector_store = Chroma.from_documents(chunks, embeddings)
+    vector_store = FAISS.from_documents(chunks, embeddings)
     
-    print(f"✓ Vector store created successfully!")
+    # Save to cache
+    print(f"💾 Saving to {cache_path}...")
+    vector_store.save_local(cache_path)
+    
+    print("✓ Vector store created successfully!\n")
     return vector_store

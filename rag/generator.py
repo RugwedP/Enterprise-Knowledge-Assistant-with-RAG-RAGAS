@@ -1,7 +1,7 @@
-from langchain_community.llms import Ollama
+from langchain_ollama import ChatOllama  
 
 def get_llm():
-    return Ollama(
+    return ChatOllama(
         model="llama3.2",  
         temperature=0
     )

@@ -27,7 +27,7 @@ def main():
 
     try:
 
-        vector_store = create_vector_store(chunks)
+        vector_store = create_vector_store(chunks, cache_path="vector_store_cache")
         retriever = vector_store.as_retriever(search_kwargs={"k": 10}) # top 5 chunks
         print("Vector store created")
     except Exception as e:
@@ -59,7 +59,11 @@ def main():
             retrieved_docs = retriever.invoke(query)
             print(f"✓ Retrieved {len(retrieved_docs)} relevant chunks\n")
             
-          
+            print("📄 RETRIEVED CHUNKS PREVIEW:")
+            for i, doc in enumerate(retrieved_docs[:3], 1):  # Show first 3
+                print(f"\nChunk {i}:")
+                print(doc.page_content[:200] + "...")
+            print("\n" + "="*60 + "\n")
             
             context = "\n\n".join([doc.page_content for doc in retrieved_docs])
             

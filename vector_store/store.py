@@ -7,7 +7,7 @@ def create_vector_store(chunks, cache_path="vector_store_cache"):
     
     # Check if cache exists
     if os.path.exists(cache_path):
-        print(f"📂 Loading cached vector store from {cache_path}...")
+        
         embeddings = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-mpnet-base-v2"
         )
@@ -16,7 +16,7 @@ def create_vector_store(chunks, cache_path="vector_store_cache"):
             embeddings,
             allow_dangerous_deserialization=True
         )
-        print("✓ Vector store loaded from cache! (instant)\n")
+       
         return vector_store
     
     # Create new vector store
@@ -26,12 +26,11 @@ def create_vector_store(chunks, cache_path="vector_store_cache"):
     )
 
 
-    print("Creating vector store...")
+   
     vector_store = FAISS.from_documents(chunks, embeddings)
     
-    # Save to cache
-    print(f"💾 Saving to {cache_path}...")
+   
     vector_store.save_local(cache_path)
     
-    print("✓ Vector store created successfully!\n")
+    print("Vector store created successfully!\n")
     return vector_store

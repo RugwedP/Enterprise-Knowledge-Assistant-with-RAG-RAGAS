@@ -28,7 +28,7 @@ def main():
     try:
 
         vector_store = create_vector_store(chunks, cache_path="vector_store_cache")
-        retriever = vector_store.as_retriever(search_kwargs={"k": 10}) # top 5 chunks
+        retriever = vector_store.as_retriever(search_kwargs={"k": 10}) 
         print("Vector store created")
     except Exception as e:
         print(e)
@@ -47,23 +47,19 @@ def main():
         "What are the core working hours for remote employees?",
         "What equipment does the company provide for remote work?",
         "How do I request time off?"
+        "what are the Managers Responsibilities?"
+        "Give contact information of hr"
         
     ]
     
     for query in queries:
-        print(f"\n{'='*60}")
-        print(f"QUERY: {query}")
-        print(f"{'='*60}\n")
+        
         
         try:
             retrieved_docs = retriever.invoke(query)
             print(f"✓ Retrieved {len(retrieved_docs)} relevant chunks\n")
             
-            print("📄 RETRIEVED CHUNKS PREVIEW:")
-            for i, doc in enumerate(retrieved_docs[:3], 1):  # Show first 3
-                print(f"\nChunk {i}:")
-                print(doc.page_content[:200] + "...")
-            print("\n" + "="*60 + "\n")
+           
             
             context = "\n\n".join([doc.page_content for doc in retrieved_docs])
             
@@ -97,13 +93,7 @@ ANSWER:"""
         except Exception as e:
             print(f"Error processing query: {e}")
     
-    # Summary
-    print(f"\n{'='*60}")
-    print("SUMMARY")
-    print(f"{'='*60}")
-    print(f"Total documents loaded: {len(docs)}")
-    print(f"Total chunks created: {len(chunks)}")
-    print(f"Queries processed: {len(queries)}")
+
 
 if __name__ == "__main__":
     main()

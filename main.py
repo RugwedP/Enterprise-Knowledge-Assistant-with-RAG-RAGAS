@@ -27,7 +27,7 @@ def main():
 
     try:
 
-        vector_store = create_vector_store(chunks, cache_path="vector_store_cache")
+        vector_store = create_vector_store(chunks, persist_directory="chroma_db")
         retriever = vector_store.as_retriever(search_kwargs={"k": 10}) 
         print("Vector store created")
     except Exception as e:

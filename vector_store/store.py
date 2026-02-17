@@ -3,36 +3,36 @@ import os
 from langchain_community.vectorstores import Chroma
 
 
-def create_vector_store(chunks, cache_path="vector_store_cache"):
-    """Create or load cached vector store"""
+def create_vector_store(chunks, persist_directory="chroma_db"):
+    """Create or load ChromaDB vector store"""
     
-    # Check if cache exists
-    if os.path.exists(cache_path):
+    ## Initialize embeddings (needed for both create and load)
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-mpnet-base-v2"
+    )
+    if os.path.exists(persist_directory) and os.path.isdir(persist_directory):
+        print(f"Loading cached vector store from {persist_directory}...")
+
         
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-mpnet-base-v2"
-        )
 
         vector_store = Chroma(
-            cache_path,
-            embeddings,
-            allow_dangerous_deserialization=True
+            persist_directory=persist_directory,  
+            embedding_function=embeddings
         )
        
         return vector_store
     
     # Create new vector store
     print("\nCreating vector store...")
-    embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-mpnet-base-v2"  # Better embeddings
+    
+
+
+   
+    vector_store = Chroma.from_documents(
+        documents=chunks,
+        embedding=embeddings,
+        persist_directory=persist_directory  # Specify where to save
     )
-
-
-   
-    vector_store = Chroma.from_documents(chunks, embeddings)
-    
-   
-    vector_store.persist()
-    
+       
     print("Vector store created successfully!\n")
     return vector_store
